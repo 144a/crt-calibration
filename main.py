@@ -79,14 +79,17 @@ class crt_raster:
         else:
             self.adjustments["pincushion"] = val        
 
-    def plot_field(self,grid=False):
+    def plot_field(self,grid=False, title=None):
         # Generate Field
         self.generate_field()
         # Create the plot
         plt.xlim(-self.starting_width/2 * 1.1, self.starting_width/2 * 1.1)
         plt.ylim(-self.starting_height/2 * 1.1, self.starting_height/2 * 1.1)
         plt.plot(self.field[0], self.field[1])
-        plt.title("Modified Parametric Function with Vector Field")
+        if title is None:
+            plt.title("Modified Parametric Function with Vector Field")
+        else:
+            plt.title(title)
         plt.xlabel("x = cos(t)")
         plt.ylabel("y = 20 * (t - floor(t)) - 10")
         if grid:
@@ -97,4 +100,4 @@ if __name__ == "__main__":
     output_raster = crt_raster()
     #output_raster.pincushion(-7)
     #output_raster.keystone(8, True)
-    output_raster.plot_field(True)
+    output_raster.plot_field(False)
