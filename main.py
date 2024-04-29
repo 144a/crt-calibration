@@ -8,8 +8,8 @@ class crt_raster:
                      "shift_y": 0, 
                      "scale_x": 1,
                      "scale_y": 1,
-                     "keystone_balance": 0,
-                     "keystone": 0}
+                     "keystone_balance": 1,
+                     "keystone": 1}
     divisions = None
     starting_width = None
     starting_height = None
@@ -29,8 +29,11 @@ class crt_raster:
         x = np.floor(t)
         y = self.starting_height * (t - np.floor(t)) - self.starting_height/2
 
-        # Apply Keystone balance
+        # Apply Keystone
+        x = x * (1 + (self.adjustments["keystone"]/2000) * y)
 
+        # Apply Keystone Balance
+        x += self.starting_width * (self.adjustments["keystone_balance"]/2000) * y
 
         # Apply Shift and Scale
         x = np.multiply(x, self.adjustments["scale_x"]) + self.adjustments["shift_x"]
@@ -53,6 +56,13 @@ class crt_raster:
         if y is not None:
             self.adjustments["scale_y"] = y
 
+    # Reasonable values are around -20 to 20
+    def keystone(self, val=None, bal = False):
+        if bal:
+            self.adjustments["keystone_balance"] = val
+        else:
+            self.adjustments["keystone"] = val
+
     def plot_field(self,grid=False):
         # Generate Field
         self.generate_field()
@@ -69,5 +79,5 @@ class crt_raster:
 
 if __name__ == "__main__":
     output_raster = crt_raster()
-    output_raster.scale(1)
+    output_raster.keystone(10, True)
     output_raster.plot_field()
