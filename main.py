@@ -41,18 +41,33 @@ class crt_raster:
         y[discontinuities] = np.nan  # Insert NaNs where the discontinuities occur
         self.field = [x, y]
 
+    def shift(self, x=None, y=None):
+        if x is not None:
+            self.adjustments["shift_x"] = x
+        if y is not None:
+            self.adjustments["shift_y"] = y
 
-    def plot_field(self,):
+    def scale(self, x=None, y=None):
+        if x is not None:
+            self.adjustments["scale_x"] = x
+        if y is not None:
+            self.adjustments["scale_y"] = y
+
+    def plot_field(self,grid=False):
         # Generate Field
         self.generate_field()
         # Create the plot
+        plt.xlim(-self.starting_width/2 * 1.1, self.starting_width/2 * 1.1)
+        plt.ylim(-self.starting_height/2 * 1.1, self.starting_height/2 * 1.1)
         plt.plot(self.field[0], self.field[1])
         plt.title("Modified Parametric Function with Vector Field")
         plt.xlabel("x = cos(t)")
         plt.ylabel("y = 20 * (t - floor(t)) - 10")
-        plt.grid(True)
+        if grid:
+            plt.grid(True)
         plt.show()
 
 if __name__ == "__main__":
     output_raster = crt_raster()
+    output_raster.scale(1)
     output_raster.plot_field()
