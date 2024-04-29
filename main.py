@@ -116,5 +116,12 @@ if __name__ == "__main__":
     keystone_raster.keystone(0)
     keystone_raster.keystone(8, True)
     keystone_raster.plot_field(True, "Keystone Balance Raster", "Keystone_Balance_raster.png")
+
+    pincushion_raster = crt_raster()
+    pincushion_raster.pincushion(-7)
+    pincushion_raster.plot_field(True, "Pincushion Raster", "Pincushion_raster.png")
+    pincushion_raster.pincushion(0)
+    pincushion_raster.pincushion(-7, True)
+    pincushion_raster.plot_field(True, "Pincushion Balance Raster", "Pincushion_Balance_raster.png")
     #output_raster.pincushion(-7)
-    #output_raster.keystone(8, True)
+    #output_raster.pincushion(8, True)
