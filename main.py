@@ -4,14 +4,7 @@ import matplotlib.pyplot as plt
 
 class crt_raster:
     field = None
-    adjustments = {"shift_x": 0, 
-                     "shift_y": 0, 
-                     "scale_x": 1,
-                     "scale_y": 1,
-                     "keystone_balance": 0,
-                     "keystone": 1,
-                     "pincushion_balance": 0,
-                     "pincushion": 0}
+    adjustments = None
     divisions = None
     starting_width = None
     starting_height = None
@@ -21,6 +14,14 @@ class crt_raster:
         self.divisions = divisions
         self.starting_width = width
         self.starting_height = height
+        self.adjustments = {"shift_x": 0, 
+                     "shift_y": 0, 
+                     "scale_x": 1,
+                     "scale_y": 1,
+                     "keystone_balance": 0,
+                     "keystone": 1,
+                     "pincushion_balance": 0,
+                     "pincushion": 0}
 
     # Takes modifications and applies vector field
     def generate_field(self,):
@@ -79,25 +80,41 @@ class crt_raster:
         else:
             self.adjustments["pincushion"] = val        
 
-    def plot_field(self,grid=False, title=None):
+    def plot_field(self,grid=False, title=None, path=None):
+        plt.clf()
         # Generate Field
         self.generate_field()
         # Create the plot
-        plt.xlim(-self.starting_width/2 * 1.1, self.starting_width/2 * 1.1)
-        plt.ylim(-self.starting_height/2 * 1.1, self.starting_height/2 * 1.1)
+        plt.xlim(-self.starting_width/2 * 1.2, self.starting_width/2 * 1.2)
+        plt.ylim(-self.starting_height/2 * 1.2, self.starting_height/2 * 1.2)
         plt.plot(self.field[0], self.field[1])
         if title is None:
-            plt.title("Modified Parametric Function with Vector Field")
+            plt.title("Modified Parametric Function with Vector Field Applied")
         else:
             plt.title(title)
-        plt.xlabel("x = cos(t)")
-        plt.ylabel("y = 20 * (t - floor(t)) - 10")
+        plt.xlabel("x(t) = cos(t)")
+        plt.ylabel("y(t) = 20 * (t - floor(t)) - 10")
         if grid:
             plt.grid(True)
-        plt.show()
+        if path is not None:
+            plt.savefig(path)
+        else:
+            plt.show()
 
 if __name__ == "__main__":
-    output_raster = crt_raster()
+    normal_raster = crt_raster()
+    normal_raster.plot_field(True, None, "Normal_raster.png")
+
+    scale_shift_raster = crt_raster()
+    scale_shift_raster.shift(x=1)
+    scale_shift_raster.scale(y=0.75)
+    scale_shift_raster.plot_field(True, "Shifted and Scaled Raster", "Shift_Scale_raster.png")
+
+    keystone_raster = crt_raster()
+    keystone_raster.keystone(8)
+    keystone_raster.plot_field(True, "Keystone Raster", "Keystone_raster.png")
+    keystone_raster.keystone(0)
+    keystone_raster.keystone(8, True)
+    keystone_raster.plot_field(True, "Keystone Balance Raster", "Keystone_Balance_raster.png")
     #output_raster.pincushion(-7)
     #output_raster.keystone(8, True)
-    output_raster.plot_field(False)
