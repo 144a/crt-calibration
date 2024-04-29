@@ -8,8 +8,10 @@ class crt_raster:
                      "shift_y": 0, 
                      "scale_x": 1,
                      "scale_y": 1,
-                     "keystone_balance": 1,
-                     "keystone": 1}
+                     "keystone_balance": 0,
+                     "keystone": 1,
+                     "pincushion_balance": 0,
+                     "pincushion": 0}
     divisions = None
     starting_width = None
     starting_height = None
@@ -29,13 +31,21 @@ class crt_raster:
         x = np.floor(t)
         y = self.starting_height * (t - np.floor(t)) - self.starting_height/2
 
-        # Apply Keystone
-        x = x * (1 + (self.adjustments["keystone"]/2000) * y)
+        # Apply Pincushion Balance adjustment
+        x += (-np.abs(np.power(y, 2)) + (self.starting_height/2)**2) * self.adjustments["pincushion_balance"]/(100 * self.starting_width/2)
 
-        # Apply Keystone Balance
-        x += self.starting_width * (self.adjustments["keystone_balance"]/2000) * y
+        # Apply Pincushion adjustment
+        x += np.sign(x)*(-np.abs(np.power(y, 2) * x) + (self.starting_height/2)**2) * self.adjustments["pincushion"]/(1000 * self.starting_width/2)
+        
+        #(sgn(x) y² x + 16) * 0.1
 
-        # Apply Shift and Scale
+        # Apply Keystone adjustment
+        x = x * (1 + (self.adjustments["keystone"]/(200 * self.starting_width/2)) * y)
+
+        # Apply Keystone Balance adjustment
+        x += self.starting_width * (self.adjustments["keystone_balance"]/(200 * self.starting_width/2)) * y
+
+        # Apply Shift and Scale adjustment
         x = np.multiply(x, self.adjustments["scale_x"]) + self.adjustments["shift_x"]
         y = np.multiply(y, self.adjustments["scale_y"]) + self.adjustments["shift_y"]
 
@@ -62,6 +72,12 @@ class crt_raster:
             self.adjustments["keystone_balance"] = val
         else:
             self.adjustments["keystone"] = val
+    
+    def pincushion(self, val=None, bal = False):
+        if bal:
+            self.adjustments["pincushion_balance"] = val
+        else:
+            self.adjustments["pincushion"] = val        
 
     def plot_field(self,grid=False):
         # Generate Field
@@ -79,5 +95,6 @@ class crt_raster:
 
 if __name__ == "__main__":
     output_raster = crt_raster()
-    output_raster.keystone(10, True)
-    output_raster.plot_field()
+    #output_raster.pincushion(-7)
+    #output_raster.keystone(8, True)
+    output_raster.plot_field(True)
