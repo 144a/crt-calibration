@@ -41,10 +41,11 @@ class crt_raster:
         #(sgn(x) y² x + 16) * 0.1
 
         # Apply Keystone adjustment
-        x = x * (1 + (self.adjustments["keystone"]/(200 * self.starting_width/2)) * y)
+        x = x * (1 + (self.adjustments["keystone"]/(100 * self.starting_width)) * y)
 
         # Apply Keystone Balance adjustment
-        x += self.starting_width * (self.adjustments["keystone_balance"]/(200 * self.starting_width/2)) * y
+        #x += self.starting_width * (self.adjustments["keystone_balance"]/(200 * self.starting_width/2)) * y
+        x += (self.adjustments["keystone_balance"]/(10 * self.starting_width)) * y
 
         # Apply Shift and Scale adjustment
         x = np.multiply(x, self.adjustments["scale_x"]) + self.adjustments["shift_x"]
